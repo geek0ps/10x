@@ -1,0 +1,26 @@
+{% if aws_vpc %}
+# AWS VPC
+resource "aws_vpc" "{{ aws_vpc.name }}" {
+  cidr_block = "{{ aws_vpc.cidr_block }}"
+
+  {% if aws_vpc["enable_dns_support"] is defined %}
+  enable_dns_support = {{ aws_vpc.enable_dns_support }}
+  {% endif %}
+
+  {% if aws_vpc["enable_dns_hostnames"] is defined %}
+  enable_dns_hostnames = {{ aws_vpc.enable_dns_hostnames }}
+  {% endif %}
+
+  {% if aws_vpc.instance_tenancy %}
+  instance_tenancy = "{{ aws_vpc.instance_tenancy }}"
+  {% endif %}
+
+  {% if aws_vpc.tags %}
+  tags = {
+    {% for key, value in aws_vpc.tags.items() %}
+    "{{ key }}" = "{{ value }}"
+    {% endfor %}
+  }
+  {% endif %}
+}
+{% endif %}

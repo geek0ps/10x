@@ -1,0 +1,39 @@
+---
+- name: Ansible Playbook for {{ playbook_name | default('Automated Playbook') }}
+  hosts: {{ hosts | default('all') }}
+  become: {{ become | default('yes') }}
+  vars:
+    {% for var in vars %}
+    {{ var.name }}: "{{ var.value }}"
+    {% endfor %}
+
+  tasks:
+    {% for task in tasks %}
+    - name: {{ task.name }}
+      {% if task.type == 'package' %}
+      apt:
+        name: "{{ task.package_name }}"
+        state: "{{ task.state | default('present') }}"
+      {% elif task.type == 'service' %}
+      service:
+        name: "{{ task.service_name }}"
+        state: "{{ task.state }}"
+      {% elif task.type == 'copy' %}
+      copy:
+        src: "{{ task.src }}"
+        dest: "{{ task.dest }}"
+      {% endif %}
+
+      {% if task.notify %}
+      notify: "{{ task.notify }}"
+      {% endif %}
+
+    {% endfor %}
+
+  handlers:
+    {% for handler in handlers %}
+    - name: {{ handler.name }}
+      service:
+        name: "{{ handler.service_name }}"
+        state: "{{ handler.state }}"
+    {% endfor %}

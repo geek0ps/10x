@@ -1,0 +1,61 @@
+{% if iam.users %}
+# IAM Users
+{% for user in iam.users %}
+resource "aws_iam_user" "{{ user.name }}" {
+  name = "{{ user.name }}"
+  {% if user.path %}
+  path = "{{ user.path }}"
+  {% endif %}
+  {% if user.tags %}
+  tags = {
+    {% for key, value in user.tags.items() %}
+    "{{ key }}" = "{{ value }}"
+    {% endfor %}
+  }
+  {% endif %}
+}
+{% endfor %}
+{% endif %}
+
+{% if iam.groups %}
+# IAM Groups
+{% for group in iam.groups %}
+resource "aws_iam_group" "{{ group.name }}" {
+  name = "{{ group.name }}"
+  {% if group.path %}
+  path = "{{ group.path }}"
+  {% endif %}
+}
+{% endfor %}
+{% endif %}
+
+{% if iam.policies %}
+# IAM Policies
+{% for policy in iam.policies %}
+resource "aws_iam_policy" "{{ policy.name }}" {
+  name   = "{{ policy.name }}"
+  path   = "{{ policy.path | default('/') }}"
+  policy = "{{ policy.policy }}"
+}
+{% endfor %}
+{% endif %}
+
+{% if iam.roles %}
+# IAM Roles
+{% for role in iam.roles %}
+resource "aws_iam_role" "{{ role.name }}" {
+  name = "{{ role.name }}"
+  assume_role_policy = "{{ role.assume_role_policy }}"
+  {% if role.path %}
+  path = "{{ role.path }}"
+  {% endif %}
+  {% if role.tags %}
+  tags = {
+    {% for key, value in role.tags.items() %}
+    "{{ key }}" = "{{ value }}"
+    {% endfor %}
+  }
+  {% endif %}
+}
+{% endfor %}
+{% endif %}

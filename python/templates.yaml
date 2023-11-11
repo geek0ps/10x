@@ -1,0 +1,33 @@
+infrastructure:
+  provider: aws
+  resources:
+    - type: aws_instance
+      properties:
+        ami: ami-0c55b159cbfafe1f0
+        instance_type: t2.micro
+
+configuration:
+  - host: all
+    tasks:
+      - name: Install nginx
+        package:
+          name: nginx
+          state: present
+
+application_deployment:
+  kubernetes:
+    - kind: Deployment
+      metadata:
+        name: nginx-deployment
+      spec:
+        replicas: 2
+        template:
+          metadata:
+            labels:
+              app: nginx
+          spec:
+            containers:
+              - name: nginx
+                image: nginx:1.14.2
+                ports:
+                  - containerPort: 80

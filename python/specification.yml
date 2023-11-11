@@ -1,0 +1,15 @@
+kubernetes:
+  deployments:
+    - name: myapp
+      replicas: 3
+      container_name: myapp-container
+      image: myapp-image:latest
+      ports:
+        - containerPort: 8080
+
+  services:
+    - name: myapp-service
+      type: LoadBalancer
+      ports:
+        - port: 80
+          targetPort: 8080

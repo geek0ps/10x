@@ -1,0 +1,22 @@
+{% if vpc_subnets %}
+# AWS VPC Subnets
+{% for subnet in vpc_subnets %}
+resource "aws_subnet" "{{ subnet.name }}" {
+  vpc_id            = "{{ subnet.vpc_id }}"
+  cidr_block        = "{{ subnet.cidr_block }}"
+  availability_zone = "{{ subnet.availability_zone }}"
+
+  {% if subnet.map_public_ip_on_launch %}
+  map_public_ip_on_launch = {{ subnet.map_public_ip_on_launch }}
+  {% endif %}
+
+  {% if subnet.tags %}
+  tags = {
+    {% for key, value in subnet.tags.items() %}
+    "{{ key }}" = "{{ value }}"
+    {% endfor %}
+  }
+  {% endif %}
+}
+{% endfor %}
+{% endif %}

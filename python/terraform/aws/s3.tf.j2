@@ -1,0 +1,30 @@
+{% if s3_buckets %}
+# S3 Buckets
+{% for bucket in s3_buckets %}
+resource "aws_s3_bucket" "{{ bucket.name }}" {
+  bucket = "{{ bucket.name }}"
+  acl    = "{{ bucket.acl | default('private') }}"
+  
+  {% if bucket.versioning %}
+  versioning {
+    enabled = {{ bucket.versioning.enabled | default(true) }}
+  }
+  {% endif %}
+
+  {% if bucket.logging %}
+  logging {
+    target_bucket = "{{ bucket.logging.target_bucket }}"
+    target_prefix = "{{ bucket.logging.target_prefix }}"
+  }
+  {% endif %}
+
+  {% if bucket.tags %}
+  tags = {
+    {% for key, value in bucket.tags.items() %}
+    "{{ key }}" = "{{ value }}"
+    {% endfor %}
+  }
+  {% endif %}
+}
+{% endfor %}
+{% endif %}

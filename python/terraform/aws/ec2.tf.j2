@@ -1,0 +1,29 @@
+{% if ec2_instances %}
+# AWS EC2 Instances
+{% for instance in ec2_instances %}
+resource "aws_instance" "{{ instance.name }}" {
+  ami           = "{{ instance.ami }}"
+  instance_type = "{{ instance.instance_type }}"
+
+  {% if instance.key_name is defined %}
+  key_name = "{{ instance.key_name }}"
+  {% endif %}
+
+  {% if instance.subnet_id is defined %}
+  subnet_id = "{{ instance.subnet_id }}"
+  {% endif %}
+
+  {% if instance.security_groups %}
+  security_groups = [{{ instance.security_groups | join(', ') | replace(' ', '') }}]
+  {% endif %}
+
+  {% if instance.tags %}
+  tags = {
+    {% for key, value in instance.tags.items() %}
+    "{{ key }}" = "{{ value }}"
+    {% endfor %}
+  }
+  {% endif %}
+}
+{% endfor %}
+{% endif %}
