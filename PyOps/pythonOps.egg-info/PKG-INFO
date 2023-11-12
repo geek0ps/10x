@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: pythonOps
+Version: 0.1
+Summary: A groundbreaking Python application that simplifies configuration management across multiple platforms, including Terraform, Ansible, and Kubernetes. Write one config file and let PyOps generate the rest!
+Home-page: https://github.com/AsyncDeveloper245/10x.git
+Author: Julius Omoleye
+Author-email: julius.omoleye@outlook.com
+Requires-Dist: jinja2
