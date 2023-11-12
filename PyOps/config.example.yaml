@@ -1,0 +1,62 @@
+terraform:
+  s3_buckets:
+    - name: "my-unique-bucket-name"
+      acl: "private"
+      tags:
+        Environment: "Development"
+
+  aws_vpc:
+    name: "main_vpc"
+    cidr_block: "10.0.0.0/16"
+
+  ec2_instances:
+    - name: "my_ec2_instance"
+      ami: "ami-12345abcde"
+      instance_type: "t2.micro"
+      subnet_id: "subnet-6789fghij"
+      tags:
+        Name: "MyEC2Instance"
+        Project: "MyProject"
+
+ansible:
+  playbooks:
+    - name: "SetupWebServer"
+      hosts: "web-servers"
+      tasks:
+        - name: "Install nginx"
+          module: "apt"
+          params:
+            name: "nginx"
+            state: "present"
+
+kubernetes:
+  deployments:
+    - name: "nginx-deployment"
+      image: "nginx:1.14.2"
+      replicas: 2
+      ports:
+        - containerPort: 80
+
+  services:
+    - name: "nginx-service"
+      type: "LoadBalancer"
+      ports:
+        - port: 80
+          targetPort: 80
+
+  monitoring:
+    prometheus:
+      # Configuration for Prometheus
+
+    grafana:
+      # Configuration for Grafana
+
+  logging:
+    elasticsearch:
+      # Configuration for Elasticsearch
+
+    fluentd:
+      # Configuration for Fluentd
+
+    kibana:
+      # Configuration for Kibana
