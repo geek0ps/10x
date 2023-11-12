@@ -4,5 +4,6 @@ PyOps/pyOps.py
 pythonOps.egg-info/PKG-INFO
 pythonOps.egg-info/SOURCES.txt
 pythonOps.egg-info/dependency_links.txt
+pythonOps.egg-info/entry_points.txt
 pythonOps.egg-info/requires.txt
 pythonOps.egg-info/top_level.txt
