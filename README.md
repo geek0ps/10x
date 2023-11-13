@@ -32,13 +32,13 @@ Welcome to `10x`, where we offer an extensive collection of automation scripts a
 
 1. **Install PyOps**
    ```
-   pip install pyops
+   pip install pythonops
    ```
 2. **Create Your Unified Config File**
    - Follow the template provided in the `PyOps/docs` directory.
 3. **Generate Platform-Specific Configs**
    ```
-   pyops generate -i path/to/unified/config.yaml
+   pyops --config path/to/unified/config.yaml <command>
    ```
 4. **Deploy Your Configurations**
    - Use the generated files for Terraform, Ansible, Kubernetes, etc., as required in your workflow.
