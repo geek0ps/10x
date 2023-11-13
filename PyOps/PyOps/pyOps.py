@@ -7,41 +7,59 @@ from jinja2 import Environment, FileSystemLoader
 def load_yaml(file_path):
     with open(file_path, 'r') as file:
         return yaml.safe_load(file)
+def remove_extra_newlines(file_path):
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
 
-def generate_terraform_files(data, template_dir='templates/terraform', output_dir='terraform'):
+    with open(file_path, 'w') as file:
+        non_empty_lines = [line for line in lines if line.strip() != ""]
+        file.write("\n".join(non_empty_lines))
+
+def generate_terraform_files(data, template_dir='templates/terraform/aws', output_dir='terraform'):
     env = Environment(loader=FileSystemLoader(template_dir))
     if 's3_buckets' in data:
         template = env.get_template('s3.tf.j2')
+        path = os.path.join(output_dir, "s3.tf")
         rendered_content = template.render({'s3_buckets': data['s3_buckets']})
         with open(os.path.join(output_dir, "s3.tf"), 'w') as f:
             f.write(rendered_content)
+        remove_extra_newlines(path)
     # VPC
     if 'vpc' in data:
         template = env.get_template('vpc.tf.j2')
+        path = os.path.join(output_dir, "vpc.tf")
         rendered_content = template.render({'vpc': data['vpc']})
         with open(os.path.join(output_dir, "vpc.tf"), 'w') as f:
             f.write(rendered_content)
+            
+        remove_extra_newlines(path)
 
     # IAM
     if 'iam' in data:
         template = env.get_template('iam.tf.j2')
+        path = os.path.join(output_dir, "iam.tf")
         rendered_content = template.render({'iam': data['iam']})
         with open(os.path.join(output_dir, "iam.tf"), 'w') as f:
             f.write(rendered_content)
+        remove_extra_newlines(path)
 
     # EC2 Instances
     if 'ec2_instances' in data:
         template = env.get_template('ec2.tf.j2')
+        path = os.path.join(output_dir, "ec2.tf")
         rendered_content = template.render({'ec2_instances': data['ec2_instances']})
         with open(os.path.join(output_dir, "ec2.tf"), 'w') as f:
-            f.write(rendered_content)         
+            f.write(rendered_content)
+        remove_extra_newlines(path)
             
     # Subnets
     if 'subnets' in data:
         template = env.get_template('subnet.tf.j2')
+        path = os.path.join(output_dir, "subnet.tf")
         rendered_content = template.render({'subnets': data['subnets']})
         with open(os.path.join(output_dir, "subnets.tf"), 'w') as f:
             f.write(rendered_content)
+        remove_extra_newlines(path)
     print("Terraform files generated.")
 
 def apply_terraform(output_dir='terraform'):
@@ -53,9 +71,11 @@ def generate_ansible_playbooks(data, template_dir='templates/ansible', output_di
     template = env.get_template('playbook.yaml.j2')
     for playbook in data.get('playbooks', []):
         rendered_content = template.render(playbook)
+        path = os.path.join(output_dir, f"{playbook['name']}_playbook.yaml")
         playbook_path = os.path.join(output_dir, f"{playbook['name']}_playbook.yaml")
         with open(playbook_path, 'w') as f:
             f.write(rendered_content)
+        remove_extra_newlines(path)
     print("Ansible playbooks generated.")
 
 def run_ansible_playbooks(output_dir='ansible'):
@@ -71,24 +91,30 @@ def generate_kubernetes_files(data, template_dir='templates/kubernetes', output_
         template = env.get_template('deployment.yaml.j2')
         for deployment in data['deployments']:
             rendered_content = template.render({'deployment': deployment})
+            path = os.path.join(output_dir, f"{deployment['name']}_deployment.yaml")
             with open(os.path.join(output_dir, f"{deployment['name']}_deployment.yaml"), 'w') as f:
                 f.write(rendered_content)
+            remove_extra_newlines(path)
 
     # Services
     if 'services' in data:
         template = env.get_template('service.yaml.j2')
         for service in data['services']:
             rendered_content = template.render({'service': service})
+            path = os.path.join(output_dir, f"{service['name']}_service.yaml")
             with open(os.path.join(output_dir, f"{service['name']}_service.yaml"), 'w') as f:
                 f.write(rendered_content)
+            remove_extra_newlines(path)
 
     # Ingress
     if 'ingress' in data:
         template = env.get_template('ingress.yaml.j2')
         for ingress in data['ingress']:
             rendered_content = template.render({'ingress': ingress})
+            path = os.path.join(output_dir, f"{ingress['name']}_ingress.yaml")
             with open(os.path.join(output_dir, f"{ingress['name']}_ingress.yaml"), 'w') as f:
                 f.write(rendered_content)
+            remove_extra_newlines(path)
 
     print("Kubernetes configuration files generated.")
 

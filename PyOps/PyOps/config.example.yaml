@@ -20,14 +20,25 @@ terraform:
 
 ansible:
   playbooks:
-    - name: "SetupWebServer"
+    - name: "Web Server Setup"
       hosts: "web-servers"
+      become: yes
+      vars:
+        - name: "http_port"
+          value: "80"
       tasks:
-        - name: "Install nginx"
-          module: "apt"
-          params:
-            name: "nginx"
-            state: "present"
+        - name: "Install Apache"
+          type: "package"
+          package_name: "apache2"
+          state: "present"
+        - name: "Ensure Apache is running"
+          type: "service"
+          service_name: "apache2"
+          state: "started"
+      handlers:
+        - name: "Restart Apache"
+          service_name: "apache2"
+          state: "restarted"
 
 kubernetes:
   deployments:
